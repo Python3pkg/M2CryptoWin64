@@ -13,10 +13,10 @@ Summary of changes:
 
 import socket
 from urllib2 import *
-import urlparse
+import urllib.parse
 
-import SSL
-import httpslib
+from . import SSL
+from . import httpslib
 
 
 class _closing_fileobject(socket._fileobject):
@@ -61,7 +61,7 @@ class HTTPSHandler(AbstractHTTPHandler):
         # Our change: Check to see if we're using a proxy.
         # Then create an appropriate ssl-aware connection.
         full_url = req.get_full_url() 
-        target_host = urlparse.urlparse(full_url)[1]
+        target_host = urllib.parse.urlparse(full_url)[1]
 
         if (target_host != host):
             h = httpslib.ProxyHTTPSConnection(host = host, ssl_context = self.ctx)
@@ -82,7 +82,7 @@ class HTTPSHandler(AbstractHTTPHandler):
         try:
             h.request(req.get_method(), req.get_selector(), req.data, headers)
             r = h.getresponse()
-        except socket.error, err: # XXX what error?
+        except socket.error as err: # XXX what error?
             raise URLError(err)
 
         # Pick apart the HTTPResponse object to get the addinfourl
@@ -120,7 +120,7 @@ def build_opener(ssl_context = None, *handlers):
     """
     import types
     def isclass(obj):
-        return isinstance(obj, types.ClassType) or hasattr(obj, "__bases__")
+        return isinstance(obj, type) or hasattr(obj, "__bases__")
 
     opener = OpenerDirector()
     default_classes = [ProxyHandler, UnknownHandler, HTTPHandler,

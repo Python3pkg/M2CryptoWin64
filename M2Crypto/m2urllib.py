@@ -3,11 +3,11 @@
 
 Copyright (c) 1999-2003 Ng Pheng Siong. All rights reserved."""
 
-import string, sys, urllib
+import string, sys, urllib.request, urllib.parse, urllib.error
 from urllib import *
 
-import SSL
-import httpslib
+from . import SSL
+from . import httpslib
 
 DEFAULT_PROTOCOL='sslv23'
 
@@ -37,7 +37,7 @@ def open_https(self, url, data=None, ssl_context=None):
             if user_passwd:
                 selector = "%s://%s%s" % (urltype, realhost, rest)
         #print "proxy via http:", host, selector
-    if not host: raise IOError, ('http error', 'no host given')
+    if not host: raise IOError('http error', 'no host given')
     if user_passwd:
         import base64
         auth = string.strip(base64.encodestring(user_passwd))
@@ -54,7 +54,7 @@ def open_https(self, url, data=None, ssl_context=None):
     else:
         h.putrequest('GET', selector)
     if auth: h.putheader('Authorization', 'Basic %s' % auth)
-    for args in self.addheaders: apply(h.putheader, args)
+    for args in self.addheaders: h.putheader(*args)
     h.endheaders()
     if data is not None:
         h.send(data + '\r\n')

@@ -2,9 +2,9 @@
 
 Copyright (c) 1999-2003 Ng Pheng Siong. All rights reserved."""
 
-from constants import *
-from packet import *
-import RSA
+from .constants import *
+from .packet import *
+from . import RSA
 
 class PublicKey:
     def __init__(self, pubkey_pkt):
@@ -28,8 +28,8 @@ class PublicKey:
 
     def add_signature(self, userid, s_pkt):
         assert isinstance(s_pkt, signature_packet)
-        assert self._userid.has_key(userid)
-        if self._signature.has_key(userid):
+        assert userid in self._userid
+        if userid in self._signature:
             self._signature.append(s_pkt)
         else:
             self._signature = [s_pkt]

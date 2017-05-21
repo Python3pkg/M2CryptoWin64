@@ -4,12 +4,12 @@ Copyright (c) 1999-2004 Ng Pheng Siong. All rights reserved."""
 
 import string, sys
 import socket
-from urlparse import urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
 import base64
 
-from httplib import *
-from httplib import HTTPS_PORT # This is not imported with just '*'
-import SSL
+from http.client import *
+from http.client import HTTPS_PORT # This is not imported with just '*'
+from . import SSL
 
 class HTTPSConnection(HTTPConnection):
 
@@ -21,7 +21,7 @@ class HTTPSConnection(HTTPConnection):
 
     def __init__(self, host, port=None, strict=None, **ssl):
         self.session = None
-        keys = ssl.keys()
+        keys = list(ssl.keys())
         try: 
             keys.remove('key_file')
         except ValueError:
@@ -124,7 +124,7 @@ class ProxyHTTPSConnection(HTTPSConnection):
         #real host/port to be used to make CONNECT request to proxy
         proto, netloc, path, query, fragment = urlsplit(url)
         if not proto:
-            raise ValueError, "unknown URL type: %s" % url
+            raise ValueError("unknown URL type: %s" % url)
         
         #get host & port
         try:
@@ -140,7 +140,7 @@ class ProxyHTTPSConnection(HTTPSConnection):
             try:
                 port = self._ports[proto]
             except KeyError:
-                raise ValueError, "unknown protocol for: %s" % url
+                raise ValueError("unknown protocol for: %s" % url)
 
         self._real_host = host
         self._real_port = int(port)
@@ -180,7 +180,7 @@ class ProxyHTTPSConnection(HTTPSConnection):
         if code != 200:
             #proxy returned and error, abort connection, and raise exception
             self.close()
-            raise socket.error, "Proxy connection failed: %d" % code
+            raise socket.error("Proxy connection failed: %d" % code)
        
         self._start_ssl()
 
